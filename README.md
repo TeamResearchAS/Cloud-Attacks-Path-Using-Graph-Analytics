@@ -1,2 +1,2 @@
-# Cloud-Attacks-Path-Using-Graph-Analytics
-delivering an end-to-end graph analytics and AI-assisted cloud security workspace
+# Cloud-Attacks-Path-Discovery-Using-Graph-Analytics
+Misconfigurations rarely exist in isolaion. Multiple weak configurations together can creae exploitable Attack Paths.
