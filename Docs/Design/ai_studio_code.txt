@@ -1,0 +1,32 @@
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                           PHASE 1: AWS Sandbox Setup                            │
+│  Create IAM User with Admin/Audit access ➔ Get Access Key ID & Secret Key       │
+└────────────────────────────────────────┬────────────────────────────────────────┘
+                                         │
+┌────────────────────────────────────────▼────────────────────────────────────────┐
+│                      PHASE 2: GitHub Codespaces Setup                           │
+│  Install Terraform, AWS CLI, CloudGoat, Python (FastAPI/NetworkX), & Node.js    │
+└────────────────────────────────────────┬────────────────────────────────────────┘
+                                         │
+┌────────────────────────────────────────▼────────────────────────────────────────┐
+│                   PHASE 3: Deploy Vulnerable Lab (CloudGoat)                    │
+│  Run: cloudgoat create iam_privesc_by_attachment                                │
+│  (Provisions real vulnerable IAM user & role in your live AWS account)          │
+└────────────────────────────────────────┬────────────────────────────────────────┘
+                                         │
+┌────────────────────────────────────────▼────────────────────────────────────────┐
+│                   PHASE 4: Graph Extraction (CloudHound / boto3)                │
+│  Scan real IAM policies, trust relationships & permissions into Graph JSON      │
+└────────────────────────────────────────┬────────────────────────────────────────┘
+                                         │
+┌────────────────────────────────────────▼────────────────────────────────────────┐
+│            PHASE 5: Python Engine & React Discovery Dashboard                   │
+│  - NetworkX finds all multi-hop attack routes to AdministratorAccess            │
+│  - Computes optimal Choke Point                                                 │
+│  - Interactive "Sever Choke Point" simulation                                   │
+└────────────────────────────────────────┬────────────────────────────────────────┘
+                                         │
+┌────────────────────────────────────────▼────────────────────────────────────────┐
+│                       PHASE 6: Teardown & Clean Up                              │
+│  Run: cloudgoat destroy to ensure ZERO ongoing AWS costs                        │
+└─────────────────────────────────────────────────────────────────────────────────┘
