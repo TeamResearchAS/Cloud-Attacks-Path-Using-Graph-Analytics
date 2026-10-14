@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ShieldAlert, Cloud, Zap, Scissors, RefreshCw, CheckCircle2 } from 'lucide-react';
 
 export default function App() {
@@ -13,7 +13,7 @@ export default function App() {
     setLoading(true);
     setMsg('Scanning live AWS account via boto3...');
     try {
-      const res = await fetch('http://localhost:8000/api/scan');
+      const res = await fetch('/api/scan');
       const data = await res.json();
       setNodes(data.nodes);
       setEdges(data.edges);
@@ -31,7 +31,7 @@ export default function App() {
 
   const severChokePoint = async (edgeId: string) => {
     try {
-      const res = await fetch('http://localhost:8000/api/sever', {
+      const res = await fetch('/api/sever', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ edge_id: edgeId, nodes, edges })
