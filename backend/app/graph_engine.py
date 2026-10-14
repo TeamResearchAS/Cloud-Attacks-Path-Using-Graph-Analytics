@@ -30,9 +30,21 @@ class AttackGraphEngine:
                             p_edges.append(ed)
                             total_risk += ed.get("risk_score", 50)
 
+                        attack_edge = next(
+                            (
+                                edge
+                                for edge in p_edges
+                                if edge.get("action") != "Compromised Access Key"
+                            ),
+                            p_edges[0] if p_edges else {},
+                        )
+                        path_labels = [node.rsplit("/", 1)[-1] for node in p]
                         discovered_paths.append({
                             "path_nodes": p,
+                            "path_labels": path_labels,
                             "path_edges": p_edges,
+                            "via_action": attack_edge.get("action", ""),
+                            "risk_score": attack_edge.get("risk_score", 50),
                             "total_hops": len(p) - 1,
                             "composite_risk": round(total_risk / max(1, len(p) - 1), 2)
                         })
@@ -40,6 +52,11 @@ class AttackGraphEngine:
                     continue
 
         discovered_paths.sort(key=lambda x: x["composite_risk"], reverse=True)
+        for index, path in enumerate(discovered_paths, start=1):
+            path["display_path"] = (
+                f"Path {index}: {' ➔ '.join(path['path_labels'])}\n"
+                f"(via {path['via_action']} - Risk: {path['risk_score']}/100)"
+            )
         return discovered_paths
 
     def calculate_choke_points(self, paths: List[Dict[str, Any]]) -> List[Dict[str, Any]]:

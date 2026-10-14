@@ -15,13 +15,16 @@ export default function App() {
     try {
       const res = await fetch('/api/scan');
       const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.detail || `AWS scan failed (${res.status}).`);
+      }
       setNodes(data.nodes);
       setEdges(data.edges);
       setPaths(data.paths);
       setChokePoints(data.choke_points);
       setMsg(`Discovered ${data.total_paths} live attack path(s) in AWS!`);
-    } catch (e) {
-      setMsg('Error connecting to backend on port 8000.');
+    } catch (error) {
+      setMsg(error instanceof Error ? error.message : 'AWS scan failed.');
     } finally {
       setLoading(false);
     }
@@ -73,24 +76,16 @@ export default function App() {
           {paths.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '30px', color: '#4ade80' }}>
               <CheckCircle2 size={36} style={{ margin: '0 auto 8px' }} />
-              <p>Zero paths to AdministratorAccess. Environment secure!</p>
+              <p>No attack paths found in the scanned results.</p>
             </div>
           ) : (
             paths.map((p, idx) => (
               <div key={idx} style={{ background: '#1f2937', padding: '12px', borderRadius: '6px', marginBottom: '10px', borderLeft: '4px solid #f43f5e' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#fbbf24', marginBottom: '6px' }}>
                   <span>HOPS: {p.total_hops}</span>
-                  <span style={{ color: '#f43f5e' }}>Risk: {p.composite_risk}/100</span>
                 </div>
-                <div style={{ fontSize: '12px', color: '#cbd5e1' }}>
-                  {p.path_nodes.map((node: string, nIdx: number) => (
-                    <span key={nIdx}>
-                      <span style={{ color: nIdx === 0 ? '#4ade80' : nIdx === p.path_nodes.length - 1 ? '#f43f5e' : '#38bdf8' }}>
-                        {node.split('/').pop()}
-                      </span>
-                      {nIdx < p.path_nodes.length - 1 && ' ➔ '}
-                    </span>
-                  ))}
+                <div style={{ fontSize: '12px', color: '#cbd5e1', whiteSpace: 'pre-line' }}>
+                  {p.display_path}
                 </div>
               </div>
             ))
