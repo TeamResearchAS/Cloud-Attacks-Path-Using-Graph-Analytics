@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from botocore.exceptions import ClientError
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from .models import AttackGraphPayload, SeverRequest
 from .graph_engine import AttackGraphEngine
@@ -16,7 +17,18 @@ app.add_middleware(
 
 @app.get("/api/scan")
 def scan_endpoint():
-    data = scan_cloudgoat_iam()
+    try:
+        data = scan_cloudgoat_iam()
+    except ClientError as error:
+        error_code = error.response.get("Error", {}).get("Code", "AWS error")
+        raise HTTPException(
+            status_code=502,
+            detail=(
+                f"AWS IAM scan failed during {error.operation_name} "
+                f"({error_code}). Check the backend AWS IAM permissions."
+            ),
+        ) from error
+
     engine = AttackGraphEngine(nodes=data["nodes"], edges=data["edges"])
     paths = engine.find_all_attack_paths()
     choke_points = engine.calculate_choke_points(paths)
